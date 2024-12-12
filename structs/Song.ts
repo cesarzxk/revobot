@@ -3,7 +3,7 @@ import youtube from "youtube-sr";
 import { i18n } from "../utils/i18n";
 import { videoPattern, isURL } from "../utils/patterns";
 
-const { stream, video_basic_info } = require("play-dl");
+const { stream, video_basic_info } = require("@piebakery/play-dl");
 
 export interface SongData {
   url: string;
