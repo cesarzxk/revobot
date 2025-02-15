@@ -2,8 +2,7 @@ import { AudioResource, createAudioResource, StreamType } from "@discordjs/voice
 import youtube from "youtube-sr";
 import { i18n } from "../utils/i18n";
 import { videoPattern, isURL } from "../utils/patterns";
-
-const { stream, video_basic_info } = require("@piebakery/play-dl");
+import ytdl from "@distube/ytdl-core";
 
 export interface SongData {
   url: string;
@@ -28,12 +27,12 @@ export class Song {
     let songInfo;
 
     if (isYoutubeUrl) {
-      songInfo = await video_basic_info(url);
+      songInfo = await ytdl.getInfo(url);
 
       return new this({
-        url: songInfo.video_details.url,
-        title: songInfo.video_details.title,
-        duration: parseInt(songInfo.video_details.durationInSec)
+        url: songInfo.videoDetails?.video_url,
+        title: songInfo.videoDetails.title,
+        duration: parseInt(songInfo.videoDetails.lengthSeconds)
       });
     } else {
       const result = await youtube.searchOne(search);
@@ -50,28 +49,40 @@ export class Song {
         throw err;
       }
 
-      songInfo = await video_basic_info(`https://youtube.com/watch?v=${result.id}`);
+      songInfo = await ytdl.getInfo(`https://youtube.com/watch?v=${result.id}`);
 
       return new this({
-        url: songInfo.video_details.url,
-        title: songInfo.video_details.title,
-        duration: parseInt(songInfo.video_details.durationInSec)
+        url: songInfo.videoDetails?.video_url,
+        title: songInfo.videoDetails?.title,
+        duration: parseInt(songInfo.videoDetails?.lengthSeconds)
       });
     }
   }
 
-  public async makeResource(): Promise<AudioResource<Song> | void> {
+  public async makeResource(): Promise<AudioResource<Song | null> | void> {
     let playStream;
 
     const source = this.url.includes("youtube") ? "youtube" : "soundcloud";
 
-    if (source === "youtube") {
-      playStream = await stream(this.url);
+    try {
+      if (source === "youtube") {
+        const info = await ytdl.getInfo(this.url); // Obtém metadados do vídeo
+
+        playStream = await ytdl(this.url, {
+          filter: "audioonly", // Filtra apenas o áudio
+          quality: "highestaudio", // Pega a melhor qualidade disponível
+          highWaterMark: 1 << 25 // Evita buffering
+        });
+      }
+    } catch (e) {
+      console.log(e);
     }
 
-    if (!stream) return;
+    if (!playStream || playStream === null) {
+      return;
+    }
 
-    return createAudioResource(playStream.stream, { metadata: this, inputType: playStream.type, inlineVolume: true });
+    return createAudioResource<any>(playStream, { metadata: this });
   }
 
   public startMessage() {

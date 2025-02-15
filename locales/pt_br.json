@@ -31,7 +31,11 @@
     "description": "Troca a música de posição na playlist.",
     "errorNotQueue": "Não há playlist.",
     "usagesReply": "Uso: {prefix}move <Posição na playlist>",
-    "result": "<@{author}> 🚚 moveu **{title}** para {index} na playlist."
+    "result": "<@{author}> 🚚 moveu **{title}** para {index} na playlist.",
+    "args": {
+      "movefrom": "Slot to move from",
+      "moveto": "Slot to move to"
+    }
   },
   "nowplaying": {
     "description": "Mostra música em reprodução.",
@@ -56,11 +60,11 @@
     "usageReply": "Uso: {prefix}play <URL do Youtube | Nome do Vídeo | URL do Soundcloud>",
     "missingPermissionConnect": "Não posso conectar a canais de voz, falta permissão!",
     "missingPermissionSpeak": "Não posso tocar neste canal de voz, falta permissão!",
-    "queueAdded": "✅ **{title}** foi adicionado na playlist por <@{author}>",
+    "queueAdded": "✅ **{title}** foi adicionado na playlist por <@{author}> ",
     "cantJoinChannel": "Não pude entrar no canal: {error}",
     "queueEnded": "❌ Fim da playlist.",
     "queueError": "Erro: {error}",
-    "startedPlaying": "🎶 Tocando: **{title}** {url}",
+    "startedPlaying": "🎶 Tocando: **{title}** {url} só aqui na Basebot FM",
     "skipSong": "<@{author}> ⏩ pulou a música.",
     "pauseSong": "<@{author}> ⏸ pausou a música.",
     "resumeSong": "<@{author}> ▶ resumiu a música!",
@@ -118,7 +122,8 @@
     "errorAlreadyCollector": "Uma busca ainda está ativa.",
     "errorNotChannel": "Você precisa entrar em um canal de voz primeiro!",
     "resultEmbedTitle": "**Você precisa enviar um número para tocar.**",
-    "resultEmbedDesc": "Resultador para: {search}"
+    "resultEmbedDesc": "Resultador para: {search}",
+    "optionQuery": "Search query"
   },
   "shuffle": {
     "description": "Ativa o modo aleatório",
@@ -135,7 +140,10 @@
     "usageReply": "Uso: {prefix}{name} <Número da playlist>",
     "errorNotQueue": "Não há nada na playlist.",
     "errorNotValid": "A playlist tem {length} música apenas!",
-    "result": "<@{author}> ⏭ pulou para música {arg}"
+    "result": "<@{author}> ⏭ pulou para música {arg}",
+    "args": {
+      "number": "The queue number to skip to"
+    }
   },
   "stop": {
     "description": "Para a música.",
