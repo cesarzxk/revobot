@@ -313,13 +313,14 @@ export class MusicQueue {
     let playingMessage: Message;
 
     try {
+      const sogInfo = song.startMessage();
       playingMessage = await this.textChannel.send({
-        content: song.startMessage(),
+        content: sogInfo,
         components: this.createButtonRow()
       });
     } catch (error: unknown) {
       console.error(error);
-      if (error instanceof Error) this.textChannel.send(error.message);
+      //if (error instanceof Error) this.textChannel.send(error.message);
       return;
     }
 

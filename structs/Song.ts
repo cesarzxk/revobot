@@ -30,9 +30,9 @@ export class Song {
       songInfo = await ytdl.getInfo(url);
 
       return new this({
-        url: songInfo.video_details.url,
-        title: songInfo.video_details.title,
-        duration: parseInt(songInfo.video_details.durationInSec)
+        url: songInfo.videoDetails?.video_url,
+        title: songInfo.videoDetails.title,
+        duration: parseInt(songInfo.videoDetails.lengthSeconds)
       });
     } else {
       const result = await youtube.searchOne(search);
@@ -52,28 +52,21 @@ export class Song {
       songInfo = await ytdl.getInfo(`https://youtube.com/watch?v=${result.id}`);
 
       return new this({
-        url: songInfo.video_details.url,
-        title: songInfo.video_details.title,
-        duration: parseInt(songInfo.video_details.durationInSec)
+        url: songInfo.videoDetails?.video_url,
+        title: songInfo.videoDetails?.title,
+        duration: parseInt(songInfo.videoDetails?.lengthSeconds)
       });
     }
   }
 
   public async makeResource(): Promise<AudioResource<Song | null> | void> {
     let playStream;
-    let metadata;
 
     const source = this.url.includes("youtube") ? "youtube" : "soundcloud";
+
     try {
       if (source === "youtube") {
         const info = await ytdl.getInfo(this.url); // Obtém metadados do vídeo
-
-        metadata = {
-          title: info.videoDetails.title,
-          url: info.videoDetails.video_url,
-          duration: new Date(Number(info.videoDetails.lengthSeconds) * 1000).toISOString().substring(11, 19), // Formato HH:MM:SS
-          thumbnail: info.videoDetails.thumbnails.pop()?.url || "" // Última thumbnail disponível
-        };
 
         playStream = await ytdl(this.url, {
           filter: "audioonly", // Filtra apenas o áudio
@@ -89,7 +82,7 @@ export class Song {
       return;
     }
 
-    return createAudioResource<any>(playStream, { metadata: metadata });
+    return createAudioResource<any>(playStream, { metadata: this });
   }
 
   public startMessage() {
