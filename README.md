@@ -1,12 +1,10 @@
-![Node build](https://github.com/eritislami/evobot/actions/workflows/node.yml/badge.svg)
-![Docker build](https://github.com/eritislami/evobot/actions/workflows/docker.yml/badge.svg)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
-![logo](https://repository-images.githubusercontent.com/186841818/8aa95700-7730-11e9-84be-e80f28520325)
+![logo](https://github.com/user-attachments/assets/adcad4ff-7755-4d9d-abe6-821cdd472fa0)
 
-# 🤖 EvoBot (Discord Music Bot)
+# 🤖 RevoBot (Discord Music Bot)
 
-> EvoBot is a Discord Music Bot built with TypeScript, discord.js & uses Command Handler from [discordjs.guide](https://discordjs.guide)
+> RevoBot is a Discord Music Bot built with TypeScript, discord.js & uses Command Handler from [discordjs.guide](https://discordjs.guide)
 
 ## Requirements
 
@@ -17,8 +15,8 @@
 ## 🚀 Getting Started
 
 ```sh
-git clone https://github.com/eritislami/evobot.git
-cd evobot
+git clone https://github.com/eritislami/revobot.git
+cd revobot
 npm install
 ```
 
@@ -39,14 +37,6 @@ Copy or Rename `config.json.example` to `config.json` and fill out the values:
   "DEFAULT_VOLUME": 100,
   "STAY_TIME": 30
 }
-```
-
-## 🐬 Docker Configuration
-
-For those who would prefer to use our [Docker container](https://hub.docker.com/repository/docker/eritislami/evobot), you may provide values from `config.json` as environment variables.
-
-```shell
-docker run -e "TOKEN=<discord-token>" eritislami/evobot
 ```
 
 ## 📝 Features & Commands
@@ -128,8 +118,8 @@ Currently available locales are:
 
 ## 🤝 Contributing
 
-1. [Fork the repository](https://github.com/eritislami/evobot/fork)
-2. Clone your fork: `git clone https://github.com/your-username/evobot.git`
+1. [Fork the repository](https://github.com/cesarzxk/revobot/fork)
+2. Clone your fork: `git clone https://github.com/your-username/revobot.git`
 3. Create your feature branch: `git checkout -b my-new-feature`
 4. Stage changes `git add .`
 5. Commit your changes: `cz` OR `npm run commit` do not use `git commit`
