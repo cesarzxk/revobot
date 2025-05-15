@@ -26,10 +26,10 @@ export default {
     if (!canModifyQueue(guildMemer!)) return;
 
     if (!movefromArg || !movetoArg)
-      return interaction.reply({ content: i18n.__mf("move.usagesReply", { prefix: bot.prefix }), ephemeral: true });
+      return interaction.reply({ content: i18n.__mf("move.usagesReply", { prefix: bot.prefix }), flags: "Ephemeral" });
 
     if (isNaN(movefromArg) || movefromArg <= 1)
-      return interaction.reply({ content: i18n.__mf("move.usagesReply", { prefix: bot.prefix }), ephemeral: true });
+      return interaction.reply({ content: i18n.__mf("move.usagesReply", { prefix: bot.prefix }), flags: "Ephemeral" });
 
     let song = queue.songs[movefromArg - 1];
 

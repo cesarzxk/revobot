@@ -18,20 +18,20 @@ export default {
       return interaction
         .reply({
           content: i18n.__mf("skipto.usageReply", { prefix: bot.prefix, name: module.exports.name }),
-          ephemeral: true
+          flags: "Ephemeral"
         })
         .catch(console.error);
 
     const queue = bot.queues.get(interaction.guild!.id);
 
     if (!queue)
-      return interaction.reply({ content: i18n.__("skipto.errorNotQueue"), ephemeral: true }).catch(console.error);
+      return interaction.reply({ content: i18n.__("skipto.errorNotQueue"), flags: "Ephemeral" }).catch(console.error);
 
     if (!canModifyQueue(guildMemer!)) return i18n.__("common.errorNotChannel");
 
     if (playlistSlotArg > queue.songs.length)
       return interaction
-        .reply({ content: i18n.__mf("skipto.errorNotValid", { length: queue.songs.length }), ephemeral: true })
+        .reply({ content: i18n.__mf("skipto.errorNotValid", { length: queue.songs.length }), flags: "Ephemeral" })
         .catch(console.error);
 
     if (queue.loop) {

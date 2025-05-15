@@ -84,7 +84,7 @@ export class Bot {
               time: timeLeft.toFixed(1),
               name: interaction.commandName
             }),
-            ephemeral: true
+            flags: "Ephemeral"
           });
         }
       }
@@ -104,9 +104,9 @@ export class Bot {
         console.error(error);
 
         if (error.message.includes("permissions")) {
-          interaction.reply({ content: error.toString(), ephemeral: true }).catch(console.error);
+          interaction.reply({ content: error.toString(), flags: "Ephemeral" }).catch(console.error);
         } else {
-          interaction.reply({ content: i18n.__("common.errorCommand"), ephemeral: true }).catch(console.error);
+          interaction.reply({ content: i18n.__("common.errorCommand"), flags: "Ephemeral" }).catch(console.error);
         }
       }
     });
