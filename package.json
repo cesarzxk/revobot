@@ -1,13 +1,13 @@
 {
-  "name": "evobot",
-  "version": "2.9.0",
+  "name": "revobot",
+  "version": "3.0.2",
   "description": "Discord music bot built with discord.js",
   "main": "index.ts",
-  "author": "Erit Islami <eritislami@gmail.com>",
+  "author": "César <cesar3d.vargas@gmail.com>",
   "private": true,
-  "homepage": "https://github.com/eritislami/evobot",
-  "repository": "github:eritislami/evobot",
-  "bugs": "https://github.com/eritislami/evobot/issues",
+  "homepage": "https://github.com/cesarzxk/revobot",
+  "repository": "github:eritislami/revobot",
+  "bugs": "https://github.com/cesarzxk/revobot/issues",
   "engines": {
     "node": ">=20.x"
   },
