@@ -12,8 +12,10 @@ export default {
     .setDescription(i18n.__("play.description"))
     .addStringOption((option) => option.setName("song").setDescription("The song you want to play").setRequired(true)),
   cooldown: 3,
+
   permissions: [PermissionsBitField.Flags.Connect, PermissionsBitField.Flags.Speak],
-  async execute(interaction: ChatInputCommandInteraction, input: string) {
+
+  async execute(interaction: ChatInputCommandInteraction, input: string, isCarlos?: any) {
     let argSongName = interaction.options.getString("song");
     if (!argSongName) argSongName = input;
 
@@ -21,7 +23,7 @@ export default {
     const { channel } = guildMember!.voice;
 
     if (!channel)
-      return interaction.reply({ content: i18n.__("play.errorNotChannel"), ephemeral: true }).catch(console.error);
+      return interaction.reply({ content: i18n.__("play.errorNotChannel"), flags: "Ephemeral" }).catch(console.error);
 
     const queue = bot.queues.get(interaction.guild!.id);
 
@@ -29,13 +31,13 @@ export default {
       return interaction
         .reply({
           content: i18n.__mf("play.errorNotInSameChannel", { user: bot.client.user!.username }),
-          ephemeral: true
+          flags: "Ephemeral"
         })
         .catch(console.error);
 
     if (!argSongName)
       return interaction
-        .reply({ content: i18n.__mf("play.usageReply", { prefix: bot.prefix }), ephemeral: true })
+        .reply({ content: i18n.__mf("play.usageReply", { prefix: bot.prefix }), flags: "Ephemeral" })
         .catch(console.error);
 
     const url = argSongName;
@@ -59,17 +61,20 @@ export default {
 
       if (error.name == "NoResults")
         return interaction
-          .reply({ content: i18n.__mf("play.errorNoResults", { url: `<${url}>` }), ephemeral: true })
+          .reply({ content: i18n.__mf("play.errorNoResults", { url: `<${url}>` }), flags: "Ephemeral" })
           .catch(console.error);
 
       if (error.name == "InvalidURL")
         return interaction
-          .reply({ content: i18n.__mf("play.errorInvalidURL", { url: `<${url}>` }), ephemeral: true })
+          .reply({ content: i18n.__mf("play.errorInvalidURL", { url: `<${url}>` }), flags: "Ephemeral" })
           .catch(console.error);
 
-      if (interaction.replied)
-        return await interaction.editReply({ content: i18n.__("common.errorCommand") }).catch(console.error);
-      else return interaction.reply({ content: i18n.__("common.errorCommand"), ephemeral: true }).catch(console.error);
+      if (interaction.replied){
+          return await interaction
+          .editReply( { content: i18n.__("common.errorCommand") })
+          .catch(console.error);
+      }else
+        return interaction.reply({ content: i18n.__("common.errorCommand"), flags: "Ephemeral" }).catch(console.error);
     }
 
     if (queue) {

@@ -20,12 +20,12 @@ export default {
     const queue = bot.queues.get(interaction.guild!.id);
 
     if (!queue)
-      return interaction.reply({ content: i18n.__("remove.errorNotQueue"), ephemeral: true }).catch(console.error);
+      return interaction.reply({ content: i18n.__("remove.errorNotQueue"), flags: "Ephemeral" }).catch(console.error);
 
     if (!canModifyQueue(guildMemer!)) return i18n.__("common.errorNotChannel");
 
     if (!removeArgs)
-      return interaction.reply({ content: i18n.__mf("remove.usageReply", { prefix: bot.prefix }), ephemeral: true });
+      return interaction.reply({ content: i18n.__mf("remove.usageReply", { prefix: bot.prefix }), flags: "Ephemeral" });
 
     const songs = removeArgs.split(",").map((arg) => parseInt(arg));
 

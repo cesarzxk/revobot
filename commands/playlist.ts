@@ -28,7 +28,9 @@ export default {
     const queue = bot.queues.get(interaction.guild!.id);
 
     if (!channel)
-      return interaction.reply({ content: i18n.__("playlist.errorNotChannel"), ephemeral: true }).catch(console.error);
+      return interaction
+        .reply({ content: i18n.__("playlist.errorNotChannel"), flags: "Ephemeral" })
+        .catch(console.error);
 
     if (queue && channel.id !== queue.connection.joinConfig.channelId)
       if (interaction.replied)
@@ -39,7 +41,7 @@ export default {
         return interaction
           .reply({
             content: i18n.__mf("play.errorNotInSameChannel", { user: interaction.client.user!.username }),
-            ephemeral: true
+            flags: "Ephemeral"
           })
           .catch(console.error);
 
@@ -54,7 +56,7 @@ export default {
         return interaction.editReply({ content: i18n.__("playlist.errorNotFoundPlaylist") }).catch(console.error);
       else
         return interaction
-          .reply({ content: i18n.__("playlist.errorNotFoundPlaylist"), ephemeral: true })
+          .reply({ content: i18n.__("playlist.errorNotFoundPlaylist"), flags: "Ephemeral" })
           .catch(console.error);
     }
 

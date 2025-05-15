@@ -12,7 +12,7 @@ export default {
     const guildMemer = interaction.guild!.members.cache.get(interaction.user.id);
 
     if (!queue)
-      return interaction.reply({ content: i18n.__("loop.errorNotQueue"), ephemeral: true }).catch(console.error);
+      return interaction.reply({ content: i18n.__("loop.errorNotQueue"), flags: "Ephemeral" }).catch(console.error);
 
     if (!guildMemer || !canModifyQueue(guildMemer)) return i18n.__("common.errorNotChannel");
 

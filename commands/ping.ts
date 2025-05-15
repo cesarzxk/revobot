@@ -6,7 +6,10 @@ export default {
   cooldown: 10,
   execute(interaction: ChatInputCommandInteraction) {
     interaction
-      .reply({ content: i18n.__mf("ping.result", { ping: Math.round(interaction.client.ws.ping) }), ephemeral: true })
+      .reply({
+        content: i18n.__mf("ping.result", { ping: Math.round(interaction.client.ws.ping) }),
+        flags: "Ephemeral"
+      })
       .catch(console.error);
   }
 };

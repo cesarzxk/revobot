@@ -14,10 +14,10 @@ export default {
     const volumeArg = interaction.options.getInteger("volume");
 
     if (!queue)
-      return interaction.reply({ content: i18n.__("volume.errorNotQueue"), ephemeral: true }).catch(console.error);
+      return interaction.reply({ content: i18n.__("volume.errorNotQueue"), flags: "Ephemeral" }).catch(console.error);
 
     if (!canModifyQueue(guildMemer!))
-      return interaction.reply({ content: i18n.__("volume.errorNotChannel"), ephemeral: true }).catch(console.error);
+      return interaction.reply({ content: i18n.__("volume.errorNotChannel"), flags: "Ephemeral" }).catch(console.error);
 
     if (!volumeArg || volumeArg === queue.volume)
       return interaction
@@ -25,10 +25,10 @@ export default {
         .catch(console.error);
 
     if (isNaN(volumeArg))
-      return interaction.reply({ content: i18n.__("volume.errorNotNumber"), ephemeral: true }).catch(console.error);
+      return interaction.reply({ content: i18n.__("volume.errorNotNumber"), flags: "Ephemeral" }).catch(console.error);
 
     if (Number(volumeArg) > 100 || Number(volumeArg) < 0)
-      return interaction.reply({ content: i18n.__("volume.errorNotValid"), ephemeral: true }).catch(console.error);
+      return interaction.reply({ content: i18n.__("volume.errorNotValid"), flags: "Ephemeral" }).catch(console.error);
 
     queue.volume = volumeArg;
     queue.resource.volume?.setVolumeLogarithmic(volumeArg / 100);

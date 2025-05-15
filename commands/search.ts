@@ -21,7 +21,7 @@ export default {
     const member = interaction.guild!.members.cache.get(interaction.user.id);
 
     if (!member?.voice.channel)
-      return interaction.reply({ content: i18n.__("search.errorNotChannel"), ephemeral: true }).catch(console.error);
+      return interaction.reply({ content: i18n.__("search.errorNotChannel"), flags: "Ephemeral" }).catch(console.error);
 
     const search = query;
 

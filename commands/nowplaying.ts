@@ -10,7 +10,9 @@ export default {
     const queue = bot.queues.get(interaction.guild!.id);
 
     if (!queue || !queue.songs.length)
-      return interaction.reply({ content: i18n.__("nowplaying.errorNotQueue"), ephemeral: true }).catch(console.error);
+      return interaction
+        .reply({ content: i18n.__("nowplaying.errorNotQueue"), flags: "Ephemeral" })
+        .catch(console.error);
 
     const song = queue.songs[0];
     const seek = queue.resource.playbackDuration / 1000;
