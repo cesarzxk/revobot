@@ -10,7 +10,7 @@
 
 1. Discord Bot Token **[Guide](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot)**  
    1.1. Enable 'Message Content Intent' in Discord Developer Portal
-2. Node.js 16.11.0 or newer
+2. Node.js 20.x or newer
 
 ## 🚀 Getting Started
 
@@ -80,7 +80,8 @@ Copy or Rename `config.json.example` to `config.json` and fill out the values:
 - Command Handler from [discordjs.guide](https://discordjs.guide/)
 - Media Controls via Buttons
 
-![buttons](https://i.imgur.com/67TGY0c.png)
+![image](https://github.com/user-attachments/assets/d88e2eeb-9589-45c6-b54c-a4b4cfb846e4)
+
 
 ## 🌎 Locales
 
