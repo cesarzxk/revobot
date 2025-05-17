@@ -4,6 +4,10 @@
 
 # 🤖 RevoBot (Discord Music Bot)
 
+This repository is a **direct continuation** of the original project [eritislami/evobot](https://github.com/eritislami/evobot).
+The original codebase has been preserved, but we are continuing its development with improvements, updated dependencies, compatibility adjustments for modern libraries, and bug fixes. Our goal is to keep the bot functional, up to date, and to introduce new features as needed by the community.
+All credit for the original foundation goes to the contributors of the original project. This version aims to maintain that work while evolving it to meet current needs.
+
 > RevoBot is a Discord Music Bot built with TypeScript, discord.js & uses Command Handler from [discordjs.guide](https://discordjs.guide)
 
 ## Requirements
