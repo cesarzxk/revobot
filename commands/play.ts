@@ -69,8 +69,11 @@ export default {
           .reply({ content: i18n.__mf("play.errorInvalidURL", { url: `<${url}>` }), flags: "Ephemeral" })
           .catch(console.error);
 
-      if (interaction.replied)
-      else
+      if (interaction.replied){
+          return await interaction
+          .editReply( { content: i18n.__("common.errorCommand") })
+          .catch(console.error);
+      }else
         return interaction.reply({ content: i18n.__("common.errorCommand"), flags: "Ephemeral" }).catch(console.error);
     }
 
