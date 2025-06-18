@@ -17,6 +17,12 @@ import { config } from "../utils/config";
 import { i18n } from "../utils/i18n";
 import { MissingPermissionsException } from "../utils/MissingPermissionsException";
 import { MusicQueue } from "./MusicQueue";
+import { pausePlayer } from "../utils/pause";
+import { resumePlayer } from "../utils/resume";
+
+import NodeCache from "node-cache";
+
+export const antiSpamCache = new NodeCache();
 
 export class Bot {
   public readonly prefix = "/";
@@ -25,6 +31,7 @@ export class Bot {
   public slashCommandsMap = new Collection<string, Command>();
   public cooldowns = new Collection<string, Collection<Snowflake, number>>();
   public queues = new Collection<Snowflake, MusicQueue>();
+  public lastChannelId = "";
 
   public constructor(public readonly client: Client) {
     this.client.login(config.TOKEN);
@@ -38,6 +45,7 @@ export class Bot {
     this.client.on("warn", (info) => console.log(info));
     this.client.on("error", console.error);
 
+    this.onVoiceStateUpdate();
     this.onInteractionCreate();
   }
 
@@ -59,6 +67,7 @@ export class Bot {
   private async onInteractionCreate() {
     this.client.on(Events.InteractionCreate, async (interaction: Interaction): Promise<any> => {
       if (!interaction.isChatInputCommand()) return;
+      this.lastChannelId = interaction.channelId;
 
       const command = this.slashCommandsMap.get(interaction.commandName);
 
@@ -101,12 +110,39 @@ export class Bot {
           throw new MissingPermissionsException(permissionsCheck.missing);
         }
       } catch (error: any) {
-        console.error(error);
-
         if (error.message.includes("permissions")) {
           interaction.reply({ content: error.toString(), flags: "Ephemeral" }).catch(console.error);
         } else {
           interaction.reply({ content: i18n.__("common.errorCommand"), flags: "Ephemeral" }).catch(console.error);
+        }
+      }
+    });
+  }
+
+  private async onVoiceStateUpdate() {
+    this.client.on("voiceStateUpdate", (oldState, newState) => {
+      const botVoiceChannel = newState?.guild?.members?.me?.voice.channel;
+      const guild = newState.guild;
+      const userChangedChannel = oldState.channelId != newState.channelId;
+
+      if (!botVoiceChannel) return;
+      if (userChangedChannel) return;
+
+      if (newState.channelId === botVoiceChannel.id) {
+        const members = botVoiceChannel.members.filter((member) => !member.user.bot);
+        const allDeaf = members.every((member) => member.voice.selfDeaf);
+        const channel = guild.channels.cache.find((ch) => ch.id === this.lastChannelId);
+
+        const isChannelTextBased = channel?.isTextBased();
+
+        if (allDeaf && members.size > 0 && isChannelTextBased) {
+          pausePlayer(newState.guild.id, members.first()!.id);
+          if (!antiSpamCache.has(`muted-${guild.id}`)) {
+            channel?.send(i18n.__("pause.everybodydeaf"));
+            antiSpamCache.set(`muted-${guild.id}`, true, 5);
+          }
+        } else {
+          resumePlayer(newState.guild.id, members.first()!.id);
         }
       }
     });

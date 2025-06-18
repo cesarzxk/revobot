@@ -43,7 +43,8 @@
   "pause": {
     "description": "Pausa la música que se está reproduciendo actualmente",
     "errorNotQueue": "No se está reproduciendo nada.",
-    "result": "<@{author}> ⏸ Pausó la música."
+    "result": "<@{author}> ⏸ Pausó la música.",
+    "everybodydeaf": "❌ Todos los miembros están silenciados, pausando la música..."
   },
   "ping": {
     "description": "Muestra la latencia media del bot (ping)",

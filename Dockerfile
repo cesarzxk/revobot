@@ -1,52 +1,39 @@
-FROM ubuntu:22.04 as base
+# Etapa base com dependências mínimas para build
+FROM alpine:3.19 AS base
 
-ENV USER=evobot
+ENV USER=revobot \
+    HOME=/home/revobot
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3 build-essential && \
-    apt-get purge -y --auto-remove && \
-    rm -rf /var/lib/apt/lists/*
-  
-RUN apt-get update && apt-get install -y curl && \
-    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs
-
-RUN groupadd -r ${USER} && \
-    useradd --create-home --home /home/evobot -r -g ${USER} ${USER}
+RUN apk add --no-cache \
+      nodejs npm \
+      python3 py3-pip \
+      curl \
+      ffmpeg \
+      shadow && \
+    addgroup -S ${USER} && adduser -S ${USER} -G ${USER}
 
 USER ${USER}
-WORKDIR /home/evobot
+WORKDIR ${HOME}
 
-FROM base as build
+FROM base AS build
 
-COPY --chown=${USER}:${USER}  . .
+USER root
+RUN apk add --no-cache build-base
 
+COPY --chown=${USER}:${USER} . ./
+USER ${USER}
 
-RUN npm ci
-RUN npm run build
+RUN npm ci && npm run build
 
-RUN rm -rf node_modules && \
-    npm ci --omit=dev
+FROM base AS prod
 
-FROM ubuntu:22.04 as prod
+RUN python3 -m venv /home/revobot/venv && \
+    /home/revobot/venv/bin/pip install --no-cache-dir spotdl
 
-RUN apt-get update && apt-get install -y curl && \
-    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs
+COPY --from=build --chown=${USER}:${USER} /home/revobot/package*.json ./
+COPY --from=build --chown=${USER}:${USER} /home/revobot/dist ./dist
+COPY --from=build --chown=${USER}:${USER} /home/revobot/imgs ./dist/imgs
 
-COPY --chown=${USER}:${USER} package*.json ./
-COPY --from=build --chown=${USER}:${USER} /home/evobot/node_modules ./node_modules
-COPY --from=build --chown=${USER}:${USER} /home/evobot/dist ./dist
-COPY --from=build --chown=${USER}:${USER} /home/evobot/imgs ./dist/imgs
+RUN npm ci --omit=dev
 
-RUN apt-get update && \
-  apt-get install -y --no-install-recommends \
-    ffmpeg \
-    python3 \
-    python3-pip \
-    python3-venv && \
-  apt-get clean && rm -rf /var/lib/apt/lists/*
-
-RUN python3 -m venv /venv && /venv/bin/pip install --no-cache-dir spotdl
-
-CMD [ "node", "./dist/index.js" ]
+CMD ["node", "./dist/index.js"]
