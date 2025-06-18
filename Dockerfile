@@ -1,42 +1,39 @@
-FROM alpine:3.19 as base
+# Etapa base com dependências mínimas para build
+FROM alpine:3.19 AS base
 
-ENV USER=revobot
-ENV HOME=/home/${USER}
+ENV USER=revobot \
+    HOME=/home/revobot
 
 RUN apk add --no-cache \
+      nodejs npm \
+      python3 py3-pip \
       curl \
       ffmpeg \
-      python3 \
-      py3-pip \
-      py3-virtualenv \
-      build-base \
-      nodejs \
-      npm \
       shadow && \
     addgroup -S ${USER} && adduser -S ${USER} -G ${USER}
 
 USER ${USER}
 WORKDIR ${HOME}
 
-FROM base as build
+FROM base AS build
 
-COPY --chown=${USER}:${USER} . .
+USER root
+RUN apk add --no-cache build-base
 
-RUN npm ci && \
-    npm run build && \
-    rm -rf node_modules && \
-    npm ci --omit=dev
-
-FROM base as prod
-
-RUN python3 -m venv ${HOME}/venv && ${HOME}/venv/bin/pip install --no-cache-dir spotdl
-
-COPY --from=build --chown=${USER}:${USER} ${HOME}/package*.json ./
-COPY --from=build --chown=${USER}:${USER} ${HOME}/node_modules ./node_modules
-COPY --from=build --chown=${USER}:${USER} ${HOME}/dist ./dist
-COPY --from=build --chown=${USER}:${USER} ${HOME}/imgs ./dist/imgs
-
+COPY --chown=${USER}:${USER} . ./
 USER ${USER}
-WORKDIR ${HOME}
+
+RUN npm ci && npm run build
+
+FROM base AS prod
+
+RUN python3 -m venv /home/revobot/venv && \
+    /home/revobot/venv/bin/pip install --no-cache-dir spotdl
+
+COPY --from=build --chown=${USER}:${USER} /home/revobot/package*.json ./
+COPY --from=build --chown=${USER}:${USER} /home/revobot/dist ./dist
+COPY --from=build --chown=${USER}:${USER} /home/revobot/imgs ./dist/imgs
+
+RUN npm ci --omit=dev
 
 CMD ["node", "./dist/index.js"]
