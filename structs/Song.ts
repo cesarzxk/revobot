@@ -1,15 +1,35 @@
-import { AudioResource, createAudioResource, StreamType } from "@discordjs/voice";
+import { AudioResource, createAudioResource } from "@discordjs/voice";
 import youtube from "youtube-sr";
 import { i18n } from "../utils/i18n";
 import { videoPattern, isURL } from "../utils/patterns";
-import ytdl from "@distube/ytdl-core";
+import { Innertube, Platform, Types } from "youtubei.js";
 
-import { PassThrough } from "stream";
+import { PassThrough, Readable } from "stream";
 import { spawn } from "child_process";
-
 const path = require("path");
 const fs = require("fs");
 import ffmpeg from "fluent-ffmpeg";
+import ytdl from "@distube/ytdl-core";
+
+function webStreamToNodeReadable(webStream: ReadableStream<Uint8Array>) {
+  return Readable.fromWeb(webStream as any);
+}
+
+Platform.shim.eval = async (data: Types.BuildScriptResult) => {
+  return new Function(data.output)();
+};
+
+// const innertube = await Innertube.create({ generate_session_locally: true });
+
+let innertube: Innertube | null = null;
+
+async function getInnertube() {
+  if (!innertube) {
+    innertube = await Innertube.create({});
+  }
+
+  return innertube;
+}
 
 export interface SongData {
   url: string;
@@ -37,6 +57,7 @@ export class Song {
   public static async from(url: string = "", search: string = "") {
     const isYoutubeUrl = videoPattern.test(url);
     const isSpotify = url.includes("spotify");
+    const innertube = await Innertube.create({ generate_session_locally: true });
 
     let songInfo;
 
@@ -135,17 +156,15 @@ export class Song {
     const source = this.url.includes("youtube") ? "youtube" : "soundcloud";
 
     try {
-      if (isSpotify) {
-        result = fs.createReadStream(this.soundPath);
-        return createAudioResource<any>(playStream as any, { metadata: this });
-      }
+      const id = this.url.split("v=")[1];
 
       if (source === "youtube") {
-        result = await ytdl(this.url, {
-          filter: "audioonly", // Filtra apenas o áudio
-          quality: "highestaudio", // Pega a melhor qualidade disponível
-          highWaterMark: 1 << 27
+        const webStream = (await getInnertube()).download(id, {
+          type: "audio",
+          client: "TV"
         });
+
+        result = webStreamToNodeReadable(await webStream);
       }
 
       playStream = await ffmpeg(result)
@@ -156,7 +175,7 @@ export class Song {
         .on("error", (err) => console.error("Erro no FFmpeg:", err))
         .on("end", () => console.log("FFmpeg finalizado."))
         .pipe(new PassThrough());
-    } catch (e) {
+    } catch (e: any) {
       console.log("error:", e);
     }
 
